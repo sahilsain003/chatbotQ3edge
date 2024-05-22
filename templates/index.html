@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Q3edgeBot-Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div id="chatbot-icon" class="chatbot-icon">
+        <img src="https://cdn-icons-png.flaticon.com/512/1698/1698535.png" alt="Chatbot Icon">
+    </div>
+    <div id="chat-container" class="chat-container hidden">
+        <div class="chat-header">
+            <img src="https://w7.pngwing.com/pngs/811/700/png-transparent-chatbot-internet-bot-business-natural-language-processing-facebook-messenger-business-people-logo-fictional-character-thumbnail.png" alt="Company Logo" class="company-logo">
+            <h3>Q3edgeBot-Admin</h3>
+            <button id="close-chat" class="close-chat">×</button>
+        </div>
+        <div id="chat-box" class="chat-box">
+            <div class="message bot-message typing">...</div>
+        </div>
+        <input id="user-input" class="user-input" type="text" placeholder="Type your answer..." />
+        <button id="send-btn" class="send-btn">Send</button>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+   </body>
+</html>
