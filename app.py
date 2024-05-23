@@ -11,9 +11,13 @@ app = Flask(__name__)
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 
+# Load environment variables
+from dotenv import load_dotenv
+load_dotenv()
+
 # Configure MongoDB URI using environment variables
-username = urllib.parse.quote_plus(os.getenv('MONGO_USERNAME', 'sahilsain'))
-password = urllib.parse.quote_plus(os.getenv('MONGO_PASSWORD', '1234'))
+username = urllib.parse.quote_plus(os.getenv('MONGO_USERNAME'))
+password = urllib.parse.quote_plus(os.getenv('MONGO_PASSWORD'))
 app.config['MONGO_URI'] = (
     f"mongodb+srv://{username}:{password}@sahilsain.8c2dtu8.mongodb.net/"
     f"Chatbot?retryWrites=true&w=majority&tls=true&tlsAllowInvalidCertificates=true"
@@ -23,9 +27,9 @@ app.config['MONGO_URI'] = (
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME', 'sahil.sain@q3edge.com')
-app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD', 'Sahil0987@')
-app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER', 'sainsahil92@gmail.com')
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER')
 
 mongo = PyMongo(app)
 mail = Mail(app)
