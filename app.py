@@ -9,7 +9,10 @@ app = Flask(__name__)
 # Configure MongoDB URI
 username = urllib.parse.quote_plus('sahilsain')
 password = urllib.parse.quote_plus('1234')
-app.config['MONGO_URI'] = f'mongodb+srv://{username}:{password}@sahilsain.8c2dtu8.mongodb.net/Chatbot?retryWrites=true&w=majority&appName=sahilsain'
+app.config['MONGO_URI'] = (
+    f"mongodb+srv://{username}:{password}@sahilsain.8c2dtu8.mongodb.net/"
+    f"Chatbot?retryWrites=true&w=majority&tls=true&tlsAllowInvalidCertificates=true"
+)
 
 # Configure Flask-Mail using environment variables
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -30,6 +33,9 @@ def index():
 def submit():
     data = request.json
     email = data.get('email')
+
+    if not data or not email:
+        return jsonify({"error": "Missing data or email"}), 400
 
     # Check MongoDB connection
     try:
@@ -61,6 +67,7 @@ def submit():
     # Insert the new user document into the database
     try:
         mongo.db.users.insert_one(new_user)
+        print(f"User {email} added to MongoDB")
     except Exception as e:
         print(f"Error inserting document into MongoDB: {e}")
         return jsonify({"error": "Database insertion error"}), 500
@@ -81,6 +88,7 @@ def submit():
         Notice Period: {new_user['notice_period']}
         """
         mail.send(msg)
+        print(f"Email sent to {app.config['MAIL_USERNAME']}")
     except Exception as e:
         print(f"Error sending email: {e}")
         return jsonify({"error": "Email sending error"}), 500
