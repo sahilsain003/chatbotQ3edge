@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Icons&display=swap');
 
 body {
   font-family: 'Roboto', sans-serif;
@@ -17,11 +18,12 @@ body {
   right: 20px;
   cursor: pointer;
   z-index: 1000;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
   background-color: #0084ff;
   border-radius: 50%;
   padding: 14px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  animation: chatbot-bounce 2s infinite;
 }
 
 .chatbot-icon img {
@@ -32,6 +34,16 @@ body {
 .chatbot-icon:hover {
   transform: scale(1.1);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  background-color: #0056b3;
+}
+
+@keyframes chatbot-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 .chat-container {
@@ -44,7 +56,10 @@ body {
   overflow: hidden;
   width: 350px;
   max-width: 90%;
+  max-height: 80vh;
   z-index: 1000;
+  display: flex;
+  flex-direction: column;
 }
 
 .chat-header {
@@ -52,12 +67,14 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 14px 24px;
-  background-color: #0084ff;
+  background: linear-gradient(135deg, #e3e5e7, #00a1ff);
   border-radius: 20px 20px 0 0;
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.2);
+  position: relative;
 }
 
 .company-logo {
-  width: 36px;
+  width: 70px;
   height: auto;
   margin-right: 12px;
 }
@@ -65,14 +82,29 @@ body {
 .chat-header h3 {
   margin: 0;
   color: #fff;
-  font-size: 15px;
-  font-weight: lighter;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.chat-header .material-icons {
+  font-size: 24px;
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.chat-header .material-icons:hover {
+  transform: scale(1.2);
+  color: #ffd700;
 }
 
 .chat-box {
-  height: 450px;
+  height: 100%;
+  max-height: calc(80vh - 140px);
   overflow-y: auto;
   padding: 14px 5px;
+  flex: 1;
 }
 
 .message {
@@ -85,7 +117,7 @@ body {
 }
 
 .bot-message {
-  background-color: #f0f0f0;
+  background-color:#f0f0f000;
   color: #333;
   align-self: flex-start;
 }
@@ -123,7 +155,7 @@ body {
 .send-btn {
   padding: 12px 30px;
   border: none;
-  background-color: #0084ff;
+  background-color: #3a5065;
   color: #fff;
   cursor: pointer;
   font-size: 12px;
@@ -133,4 +165,58 @@ body {
 
 .send-btn:hover {
   background-color: #0056b3;
+}
+
+/* Responsive design */
+@media (max-width: 767px) {
+  .chat-container {
+    bottom: 10px;
+    right: 10px;
+    width: 100%;
+    max-width: calc(100% - 20px);
+  }
+
+  .chat-header, .user-input-container {
+    padding: 10px 15px;
+  }
+
+  .chat-header h3 {
+    font-size: 14px;
+  }
+
+  .user-input {
+    font-size: 14px;
+    margin-right: 8px;
+  }
+
+  .send-btn {
+    padding: 10px 20px;
+    font-size: 10px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .chat-container {
+    bottom: 15px;
+    right: 15px;
+    width: 400px;
+  }
+
+  .chat-header, .user-input-container {
+    padding: 12px 20px;
+  }
+
+  .chat-header h3 {
+    font-size: 15px;
+  }
+
+  .user-input {
+    font-size: 15px;
+    margin-right: 10px;
+  }
+
+  .send-btn {
+    padding: 11px 25px;
+    font-size: 11px;
+  }
 }
