@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (chatContainer.classList.contains('hidden')) {
             chatbotIcon.click();
         }
-    }, 2000); // Opens the chat after 2 seconds
+    }, 2000); 
 });
 
 let chatbotIcon = document.getElementById('chatbot-icon');
@@ -13,7 +13,6 @@ let chatBox = document.getElementById('chat-box');
 let userInput = document.getElementById('user-input');
 let sendBtn = document.getElementById('send-btn');
 let questions = [
-    "What's your email ID?",
     "What's your highest qualification?",
     "What's your LinkedIn profile Link?",
     "What's your last company?",
@@ -30,7 +29,7 @@ chatbotIcon.addEventListener('click', () => {
     chatContainer.classList.remove('hidden');
     chatbotIcon.classList.add('hidden');
     setTimeout(() => {
-        addMessage(" Welcome to the Q3edge recruitment process. Before we proceed further, could you please tell me your name?", 'bot');
+        addMessage(" Welcome to the Q3edge recruitment process. Before we proceed further, could you please enter your email address?", 'bot');
     }, 500);
 });
 
@@ -71,50 +70,42 @@ function handleResponse(response) {
     }
     switch (questionIndex) {
         case 0:
-            if (/^[a-zA-Z ]+$/.test(response)) {
-                responses.name = response;
-                addSmartResponse(`Nice to meet you, ${response}.`, () => askNextQuestion());
-            } else {
-                addMessage("Please enter a valid name.", 'bot');
-            }
-            break;
-        case 1:
             if (/^\S+@\S+\.\S+$/.test(response)) {
                 responses.email = response;
-                addSmartResponse(`Got it, ${responses.name}.`, () => askNextQuestion());
+                fetchCandidateDetails(response);
             } else {
                 addMessage("Please enter a valid email address.", 'bot');
             }
             break;
-        case 2:
+        case 1:
             responses.qualification = response;
             addSmartResponse(`${response} is impressive!`, () => askNextQuestion());
             break;
-        case 3:
+        case 2:
             if (response.startsWith('https://www.linkedin.com/')) {
                 responses.linkedin = response;
-                addSmartResponse(`Thank you, ${responses.name}! We've recorded your LinkedIn profile.`, () => askNextQuestion());
+                addSmartResponse(`Thank you! We've recorded your LinkedIn profile.`, () => askNextQuestion());
             } else {
                 addMessage("Please enter a valid LinkedIn profile URL.", 'bot');
             }
             break;
-        case 4: // Handle response for last company
+        case 3:
             responses.last_company = response;
             addSmartResponse(`Great! Your last company is ${response}.`, () => askNextQuestion());
             break;
-        case 5: // Handle response for years of experience
-        if (/^\d+$/.test(response)) {
-            responses.years_experience = response;
-            addSmartResponse(`Nice! You have ${response} years of experience.`, () => askNextQuestion());
-        } else {
-            addMessage("Please enter a valid number for years of experience.", 'bot');
-        }
-        break;
-        case 6: // Handle response for unique code
+        case 4:
+            if (/^\d+$/.test(response)) {
+                responses.years_experience = response;
+                addSmartResponse(`Nice! You have ${response} years of experience.`, () => askNextQuestion());
+            } else {
+                addMessage("Please enter a valid number for years of experience.", 'bot');
+            }
+            break;
+        case 5:
             responses.unique_code = response;
             addSmartResponse(`Got it! Your unique code is ${response}.`, () => askNextQuestion());
             break;
-         case 7: // Handle response for expected salary
+        case 6:
             if (/^\d+$/.test(response)) {
                 responses.expected_salary = response;
                 addSmartResponse(`Understood! Your expected salary is ${response}.`, () => askNextQuestion());
@@ -122,11 +113,11 @@ function handleResponse(response) {
                 addMessage("Please enter a valid number for expected salary.", 'bot');
             }
             break;
-        case 8: // Handle response for key skills
+        case 7:
             responses.key_skills = response;
             addSmartResponse(`Thank you! Your key skills are ${response}.`, () => askNextQuestion());
             break;
-            case 9: // Handle response for notice period
+        case 8:
             if (/^\d+$/.test(response)) {
                 responses.notice_period = response;
                 addSmartResponse(`Noted! Your notice period is ${response}.`, () => {
@@ -138,7 +129,6 @@ function handleResponse(response) {
             break;
     }
 }
-
 
 function askNextQuestion() {
     if (questionIndex < questions.length) {
@@ -160,7 +150,35 @@ function addSmartResponse(text, callback) {
     }, 1000);
 }
 
+function fetchCandidateDetails(email) {
+    fetch('/get_candidate_details', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({email: email})
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw Error(response.statusText);
+        }
+        return response.json();
+    })
+    .then(data => {
+        addMessage(`Candidate Name: ${data.Candidate_Name}`, 'bot');
+        addMessage(`Phone Number: ${data.Phone_Number}`, 'bot');
+        askNextQuestion();
+    })
+    .catch(error => {
+        addMessage('Please enter a valid email address that is registered.', 'bot');
+        console.error('Error:', error);
+    });
+}
+
 function sendDetailsToServer(details) {
+    // Add the chat data to the user details
+    details.chatData = Object.assign({}, responses);
+
     fetch('/submit', {
         method: 'POST',
         headers: {
@@ -170,14 +188,10 @@ function sendDetailsToServer(details) {
     })
     .then(response => response.json())
     .then(data => {
-        if (data.error) {
-            addMessage(data.error, 'bot');
-        } else {
-            addMessage(data.message, 'bot');
-        }
+        addMessage(data.message, 'bot');
     })
     .catch(error => {
-        addMessage('An error occurred. Please try again later.', 'bot');
+        addMessage('An error occurred while submitting details. Please try again later.', 'bot');
         console.error('Error:', error);
     });
 }
