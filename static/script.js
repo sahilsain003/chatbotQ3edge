@@ -74,7 +74,7 @@ function handleResponse(response) {
                 responses.email = response;
                 fetchCandidateDetails(response);
             } else {
-                addMessage("Please enter a valid email address.", 'bot');
+                addMessage("Please enter your registered email address from you get the link .", 'bot');
             }
             break;
         case 1:
